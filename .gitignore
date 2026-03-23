@@ -1,0 +1,15 @@
+# Backend
+backend/.env
+backend/chroma_db/
+backend/pdfs/*.pdf
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# General
+.DS_Store

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ── Avenir Fonts ──
+   Place files in /public/fonts/
+   ─────────────────── */
+@font-face {
+  font-family: 'AvenirBlack';
+  src: url('/fonts/AvenirBlack.woff2') format('woff2'),
+       url('/fonts/AvenirBlack.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AvenirMedium';
+  src: url('/fonts/AvenirMedium.woff2') format('woff2'),
+       url('/fonts/AvenirMedium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'AvenirMedium', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes orbPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6,142,206,0.3), 0 8px 32px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(6,142,206,0), 0 8px 32px rgba(0,0,0,0.3); }
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-fadeIn { animation: fadeIn 0.6s ease-out forwards; }
+.animate-fadeIn-d1 { animation: fadeIn 0.6s ease-out 0.1s forwards; opacity: 0; }
+.animate-fadeIn-d2 { animation: fadeIn 0.6s ease-out 0.2s forwards; opacity: 0; }
+.animate-fadeIn-d3 { animation: fadeIn 0.6s ease-out 0.35s forwards; opacity: 0; }
+.animate-fadeIn-d4 { animation: fadeIn 0.6s ease-out 0.5s forwards; opacity: 0; }
+.animate-msgIn { animation: msgIn 0.3s ease-out; }
+
+.typing-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+/* ── Markdown — prose-law ── */
+.prose-law { font-size: 0.9375rem; line-height: 1.75; color: #2a2d3e; }
+.prose-law p { margin-bottom: 0.85rem; }
+.prose-law p:last-child { margin-bottom: 0; }
+.prose-law h1 { font-family: 'AvenirBlack', sans-serif; font-size: 1.15rem; font-weight: 900; color: #111; margin: 1.4rem 0 0.6rem; }
+.prose-law h2 { font-family: 'AvenirBlack', sans-serif; font-size: 1.02rem; font-weight: 900; color: #111; margin: 1.2rem 0 0.5rem; }
+.prose-law h3 { font-family: 'AvenirBlack', sans-serif; font-size: 0.93rem; font-weight: 900; color: #222; margin: 1rem 0 0.4rem; }
+.prose-law h1:first-child,.prose-law h2:first-child,.prose-law h3:first-child { margin-top: 0; }
+.prose-law strong { color: #111; font-weight: 600; }
+.prose-law ul, .prose-law ol { margin: 0.4rem 0 0.85rem 1.4rem; }
+.prose-law li { margin-bottom: 0.3rem; line-height: 1.65; }
+.prose-law li::marker { color: #068ece; }
+.prose-law blockquote {
+  border-left: 3px solid #068ece; padding: 0.3rem 0 0.3rem 1rem;
+  margin: 0.6rem 0; color: #5a6080; font-style: italic;
+  background: rgba(6,142,206,0.05); border-radius: 0 6px 6px 0;
+}
+.prose-law hr { border: none; border-top: 1px solid #dde2f0; margin: 1rem 0; }
+.prose-law code {
+  background: #eef1fb; border: 1px solid #d0d6ee; border-radius: 4px;
+  padding: 0.15em 0.4em; font-size: 0.85em;
+  font-family: "SF Mono","Fira Code",monospace; color: #068ece;
+}
+.prose-law table {
+  width: 100%; border-collapse: collapse; margin: 0.75rem 0;
+  font-size: 0.875rem; border-radius: 10px; overflow: hidden; border: 1px solid #dde2f0;
+}
+.prose-law th {
+  background: #f4f6fd; color: #3a3d5c; font-weight: 600;
+  padding: 0.5rem 0.875rem; text-align: left; border-bottom: 1px solid #dde2f0;
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.prose-law td { padding: 0.45rem 0.875rem; border-bottom: 1px solid #eef1fb; color: #2a2d3e; }
+.prose-law tr:last-child td { border-bottom: none; }
+.prose-law tr:nth-child(even) td { background: rgba(6,142,206,0.03); }
+.prose-law tr:hover td { background: rgba(6,142,206,0.06); transition: background 0.1s; }
+.prose-law a { color: #068ece; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Dark prose ── */
+.prose-law-dark { color: #c8c8c8; }
+.prose-law-dark p { color: #c8c8c8; }
+.prose-law-dark h1, .prose-law-dark h2, .prose-law-dark h3 { color: #e8e8e8; }
+.prose-law-dark strong { color: #e8e8e8; }
+.prose-law-dark blockquote { color: #888; background: rgba(6,142,206,0.08); border-left-color: #068ece; }
+.prose-law-dark hr { border-top-color: #1e2a3a; }
+.prose-law-dark code { background: #0f1923; border-color: #1e2a3a; color: #78c8f0; }
+.prose-law-dark table { border-color: #1e2a3a; }
+.prose-law-dark th { background: #0c1520; color: #aaa; border-bottom-color: #1e2a3a; }
+.prose-law-dark td { color: #c8c8c8; border-bottom-color: #0f1923; }
+.prose-law-dark tr:nth-child(even) td { background: rgba(6,142,206,0.04); }
+.prose-law-dark tr:hover td { background: rgba(6,142,206,0.08); }
+.prose-law-dark a { color: #5bb8e8; }
