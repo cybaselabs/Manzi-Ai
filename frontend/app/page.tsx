@@ -826,7 +826,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask anything..."
+                placeholder="How can I help you today?"
                 rows={1}
                 style={{
                   flex: 1, background: "transparent", border: "none", outline: "none",
