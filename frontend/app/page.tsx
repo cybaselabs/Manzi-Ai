@@ -418,7 +418,7 @@
 //                   color: d ? "#343430" : "#c8c5bc",
 //                   marginTop: 7, letterSpacing: "0.01em",
 //                 }}>
-//                   Manzi isubiza hashingiwe gusa ku mategeko yandikwa · Powered by City of Kigali
+//                   Manzi answers based on official laws only · Powered by City of Kigali
 //                 </p>
 //               </div>
 //             </div>
@@ -454,9 +454,9 @@ const CATEGORIES = [
 
 function getGreeting(): { emoji: string; text: string } {
   const h = new Date().getHours();
-  if (h < 12) return { emoji: "☀️", text: "Mwiriwe" };
-  if (h < 17) return { emoji: "🌤", text: "Mwiriwe" };
-  return { emoji: "🌙", text: "Muramuke" };
+  if (h < 12) return { emoji: "☀️", text: "Good morning" };
+  if (h < 17) return { emoji: "🌤", text: "Good afternoon" };
+  return { emoji: "🌙", text: "Good evening" };
 }
 
 export default function Home() {
@@ -542,7 +542,7 @@ export default function Home() {
           </div>
           <div>
             <p style={{ fontFamily: "'AvenirBlack', sans-serif", fontSize: 16, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}>Manzi</p>
-            <p style={{ fontSize: 10, color: muted, lineHeight: 1.2 }}>Umujyi wa Kigali</p>
+            <p style={{ fontSize: 10, color: muted, lineHeight: 1.2 }}>City of Kigali</p>
           </div>
         </div>
 
@@ -556,7 +556,7 @@ export default function Home() {
               background: "#068ece", color: "#fff", border: "none", cursor: "pointer", fontFamily: "inherit",
             }}
           >
-            <Plus size={14} /> Ikiganiro gishya
+            <Plus size={14} /> New Chat
           </button>
         </div>
 
@@ -586,9 +586,9 @@ export default function Home() {
         {/* Bottom */}
         <div style={{ padding: "8px 8px 14px", borderTop: `1px solid ${sidebarBorder}` }}>
           {[
-            { icon: BookOpen, label: "Amategeko", badge: "3" },
-            { icon: Settings, label: "Igenamiterere" },
-            { icon: HelpCircle, label: "Ubufasha" },
+            { icon: BookOpen, label: "Laws", badge: "3" },
+            { icon: Settings, label: "Settings" },
+            { icon: HelpCircle, label: "Help" },
           ].map((item) => (
             <button key={item.label} style={{
               width: "100%", display: "flex", alignItems: "center", gap: 9,
@@ -630,7 +630,7 @@ export default function Home() {
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fad201" }} />
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#20603d" }} />
             </div>
-            <span style={{ fontSize: 12.5, color: textSecondary }}>Amategeko y&apos;Umujyi wa Kigali</span>
+            <span style={{ fontSize: 12.5, color: textSecondary }}>City of Kigali Laws</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 6px rgba(34,197,94,0.4)" }} />
@@ -660,7 +660,7 @@ export default function Home() {
               </div>
 
               {/* Greeting */}
-              <p className={mounted ? "animate-fadeIn-d1" : ""} style={{ fontSize: 14, color: textSecondary, marginBottom: 8 }}>
+              <p className={mounted ? "animate-fadeIn-d1" : ""} style={{ fontSize: 14, color: textSecondary, marginBottom: 8, fontWeight: 500 }}>
                 {greeting.emoji} {greeting.text}
               </p>
 
@@ -790,7 +790,7 @@ export default function Home() {
               </button>
             </div>
             <p style={{ textAlign: "center", fontSize: 10, color: muted, marginTop: 8 }}>
-              Manzi isubiza hashingiwe gusa ku mategeko yandikwa · Powered by City of Kigali
+              Manzi answers based on official laws only · Powered by City of Kigali
             </p>
           </div>
         </div>
