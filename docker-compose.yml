@@ -1,0 +1,22 @@
+services:
+  frontend:
+    image: ghcr.io/cybaselabs/manzi-ai-frontend:latest
+    container_name: manzi-frontend
+    restart: unless-stopped
+    ports:
+      - "1012:3000"
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    image: ghcr.io/cybaselabs/manzi-ai-backend:latest
+    container_name: manzi-backend
+    restart: unless-stopped
+    ports:
+      - "1013:8000"
+    environment:
+      - VOYAGE_API_KEY=${VOYAGE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./chroma_db:/app/chroma_db
+      - ./pdfs:/app/pdfs
