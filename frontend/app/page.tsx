@@ -443,6 +443,25 @@ interface DisplayMessage {
   sources?: Source[];
 }
 
+interface Conversation {
+  id: string;
+  title: string;
+  messages: DisplayMessage[];
+  createdAt: number;
+}
+
+const STORAGE_KEY = "manzi_conversations";
+
+function loadConversations(): Conversation[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch { return []; }
+}
+
+function saveConversations(convos: Conversation[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(convos.slice(0, 50)));
+}
+
 const CATEGORIES = [
   { emoji: "🌿", label: "Swamplands", desc: "Protected wetland areas", text: "What activities are prohibited in protected swampland areas?" },
   { emoji: "🚗", label: "Road Use", desc: "Traffic & road regulations", text: "What are the penalties for illegal road use in Kigali?" },
@@ -461,6 +480,8 @@ function getGreeting(): { emoji: string; text: string } {
 
 export default function Home() {
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -471,7 +492,14 @@ export default function Home() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const greeting = getGreeting();
 
-  useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setMounted(true);
+      setConversations(loadConversations());
+    }, 60);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
   useEffect(() => {
     const el = textareaRef.current;
@@ -480,16 +508,40 @@ export default function Home() {
     el.style.height = Math.min(el.scrollHeight, 160) + "px";
   }, [input]);
 
+  const startNewChat = () => {
+    setMessages([]); setError(null); setInput(""); setActiveId(null);
+  };
+
+  const loadConversation = (convo: Conversation) => {
+    setMessages(convo.messages);
+    setActiveId(convo.id);
+    setError(null);
+  };
+
   const handleSend = async (text?: string) => {
     const msg = (text || input).trim();
     if (!msg || loading) return;
     setInput(""); setError(null);
-    setMessages((prev) => [...prev, { role: "user", content: msg }]);
+    const newMessages: DisplayMessage[] = [...messages, { role: "user", content: msg }];
+    setMessages(newMessages);
     setLoading(true);
     try {
       const history: Message[] = messages.map((m) => ({ role: m.role, content: m.content }));
       const res = await sendMessage(msg, history);
-      setMessages((prev) => [...prev, { role: "assistant", content: res.answer, sources: res.sources }]);
+      const finalMessages: DisplayMessage[] = [...newMessages, { role: "assistant", content: res.answer, sources: res.sources }];
+      setMessages(finalMessages);
+
+      // Save to localStorage
+      const convos = loadConversations();
+      const id = activeId || crypto.randomUUID();
+      const title = msg.slice(0, 50) + (msg.length > 50 ? "…" : "");
+      const existing = convos.findIndex((c) => c.id === id);
+      const updated: Conversation = { id, title, messages: finalMessages, createdAt: Date.now() };
+      if (existing >= 0) convos[existing] = updated;
+      else convos.unshift(updated);
+      saveConversations(convos);
+      setConversations(convos);
+      setActiveId(id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setMessages((prev) => prev.slice(0, -1));
@@ -549,7 +601,7 @@ export default function Home() {
         {/* New Chat */}
         <div style={{ padding: "0 12px 10px" }}>
           <button
-            onClick={() => { setMessages([]); setError(null); setInput(""); }}
+            onClick={startNewChat}
             style={{
               width: "100%", display: "flex", alignItems: "center", gap: 8,
               padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
@@ -562,23 +614,34 @@ export default function Home() {
 
         {/* Conversations */}
         <div className="scrollbar-thin" style={{ flex: 1, padding: "4px 8px", overflowY: "auto" }}>
-          {messages.length > 0 && (
-            <div>
+          {mounted && conversations.length > 0 ? (
+            <>
               <p style={{ fontSize: 9, fontWeight: 700, color: muted, padding: "10px 8px 5px", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                Current
+                Recent
               </p>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8,
-                background: "rgba(6,142,206,0.08)", color: textSecondary, fontSize: 12, cursor: "pointer",
-              }}>
-                <MessageSquare size={13} style={{ flexShrink: 0, color: "#068ece" }} />
-                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {messages.find((m) => m.role === "user")?.content.slice(0, 28)}...
-                </span>
-              </div>
-            </div>
-          )}
-          {messages.length === 0 && (
+              {conversations.map((convo) => (
+                <button
+                  key={convo.id}
+                  onClick={() => loadConversation(convo)}
+                  style={{
+                    width: "100%", display: "flex", alignItems: "center", gap: 8,
+                    padding: "8px 10px", borderRadius: 8, border: "none", cursor: "pointer",
+                    background: activeId === convo.id ? "rgba(6,142,206,0.12)" : "transparent",
+                    color: activeId === convo.id ? "#068ece" : textSecondary,
+                    fontSize: 12, fontFamily: "inherit", textAlign: "left",
+                    transition: "background 0.15s",
+                  }}
+                  onMouseEnter={(e) => { if (activeId !== convo.id) e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+                  onMouseLeave={(e) => { if (activeId !== convo.id) e.currentTarget.style.background = "transparent"; }}
+                >
+                  <MessageSquare size={13} style={{ flexShrink: 0, color: activeId === convo.id ? "#068ece" : muted }} />
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {convo.title}
+                  </span>
+                </button>
+              ))}
+            </>
+          ) : (
             <p style={{ fontSize: 12, color: muted, padding: "16px 8px", textAlign: "center" }}>No conversations yet</p>
           )}
         </div>

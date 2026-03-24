@@ -20,3 +20,4 @@ services:
     volumes:
       - ./chroma_db:/app/chroma_db
       - ./pdfs:/app/pdfs
+      - ./analytics.db:/app/analytics.db

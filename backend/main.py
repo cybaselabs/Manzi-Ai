@@ -4,6 +4,7 @@ Run: uvicorn main:app --reload --port 8000
 """
 
 import os
+import time
 import anthropic
 import chromadb
 import voyageai
@@ -12,8 +13,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from typing import Optional
+from analytics import init_db, log_query, get_stats
 
 load_dotenv()
+init_db()
 
 app = FastAPI(title="Manzi Law Assistant API", version="1.0.0")
 
@@ -43,13 +46,16 @@ except Exception:
     collection = None
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
-SYSTEM_PROMPT = """You are Manzi, an expert legal assistant specializing in Rwandan law.
+SYSTEM_PROMPT = """You are Manzi, the City of Kigali's smart city assistant.
 
 Your role:
-- Answer questions based ONLY on the legal document excerpts provided to you
+- You help people understand specific topics governed by the City of Kigali: swamplands, road use, taxation, urban planning, environment, and land use
+- Answer questions based ONLY on the document excerpts provided to you
 - Always cite the specific article, section, or provision you are referencing
 - If the answer is not found in the provided excerpts, clearly say so — do not guess
-- Be precise, professional, and easy to understand
+- Be precise, friendly, and easy to understand
+
+When greeting or introducing yourself, say you are Manzi, the City of Kigali's smart assistant — never call yourself a "legal assistant".
 
 Language rule:
 - DEFAULT language is English
@@ -93,6 +99,11 @@ def health():
     }
 
 
+@app.get("/analytics")
+def analytics():
+    return get_stats()
+
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     if not collection or collection.count() == 0:
@@ -100,6 +111,8 @@ def chat(request: ChatRequest):
             status_code=503,
             detail="Documents not indexed yet. Run ingest.py first.",
         )
+
+    start_ms = int(time.time() * 1000)
 
     # 1. Embed the user question
     query_embedding = voyage_client.embed(
@@ -165,5 +178,8 @@ def chat(request: ChatRequest):
                     relevance=round(1 - distance, 3),
                 )
             )
+
+    duration_ms = int(time.time() * 1000) - start_ms
+    log_query(request.message, answer, duration_ms, [s.dict() for s in sources])
 
     return ChatResponse(answer=answer, sources=sources)

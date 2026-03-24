@@ -5,6 +5,7 @@ backend/pdfs/*.pdf
 backend/__pycache__/
 backend/*.pyc
 backend/venv/
+backend/analytics.db
 
 # Frontend
 frontend/node_modules/
