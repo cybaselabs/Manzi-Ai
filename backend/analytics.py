@@ -6,7 +6,7 @@ import sqlite3
 import json
 import os
 
-DB_PATH = os.getenv("ANALYTICS_DB", "./analytics.db")
+DB_PATH = os.getenv("ANALYTICS_DB", "/app/data/analytics.db")
 
 
 def init_db():
