@@ -14,7 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source
-COPY main.py ingest.py ./
+COPY main.py ingest.py analytics.py ./
 
 # Chroma + PDFs will be mounted as volumes at runtime
 RUN mkdir -p /app/chroma_db /app/pdfs
